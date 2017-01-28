@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {AngularFire} from 'angularfire2'
 import {Router} from "@angular/router";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'login',
@@ -19,11 +20,18 @@ export class MessengerComponent {
   usersRef;
   afRef:any;
   router;
+  userService;
+  friendList;
+  userMsg: string;
 
-  constructor(private af:AngularFire, _router: Router) {
+  constructor(private af:AngularFire, _router: Router, _userservice : UserService) {
     this.router = _router;
+    this.userService = _userservice;
     this.afRef = af;
     this.usersRef = af.database.list("/users");
+    this.usersRef.subscribe(users=>{
+      this.friendList = users;
+    })
   }
 
   signupUser() {
@@ -52,5 +60,13 @@ export class MessengerComponent {
     else {
       alert("Please fill all fields");
     }
+  }
+
+  sendMsg(){
+    console.log(this.userMsg);
+  }
+
+  logout() {
+    this.userService.logoutUser();
   }
 }
