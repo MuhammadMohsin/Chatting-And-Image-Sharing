@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
-import {AngularFire} from 'angularfire2'
+import {Component, Inject} from '@angular/core';
+import { AngularFire,FirebaseListObservable ,FirebaseObjectObservable, FirebaseApp} from 'angularfire2';
 import {Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
+import * as fb from 'firebase';
 
 @Component({
   selector: 'login',
@@ -29,9 +30,11 @@ export class MessengerComponent {
   selectedUserObj;
   selectUserToSendMsg;
   myFriendChat = [];
+  private storage: fb.storage.Reference;
 
-  constructor(private af:AngularFire, _router: Router, _userservice : UserService) {
+  constructor(private af:AngularFire, _router: Router, _userservice : UserService,@Inject(FirebaseApp) private firebaseApp: any) {
     this.router = _router;
+    this.storage = this.firebaseApp.storage().ref();
     this.userService = _userservice;
     this.authUser = _userservice.getUserData();
     this.afRef = af;
@@ -80,6 +83,33 @@ export class MessengerComponent {
       }, err=>{
         alert(err.message);
       })
+    }
+  }
+
+  uploadImage() {
+    for (let selectedFile of [(<HTMLInputElement>document.getElementById('uploadFile')).files[0]]) {
+      if(selectedFile) {
+        var thisRef = this.storage.child(selectedFile.name);
+        thisRef.put(selectedFile).then((snapshot) => {
+          thisRef.getDownloadURL().then(url=> {
+            console.log("image url after = "+url);
+            this.msgsRef.push(
+              {
+                sentBy : this.authUser.$key,
+                sentTo : this.selectedUserObj.$key,
+                message: "",
+                fileUrl: url
+              }
+            ).then(data=>{
+              alert("Image Sent");
+            }, err=>{
+              alert(err.message);
+            })
+          })
+        }, (err) => {
+          console.log("Error", err);
+        });
+      }
     }
   }
 
