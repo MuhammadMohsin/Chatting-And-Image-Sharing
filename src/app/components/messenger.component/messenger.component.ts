@@ -18,52 +18,69 @@ export class MessengerComponent {
   };
 
   usersRef;
+  msgsRef;
+  allMsgs = [];
   afRef:any;
   router;
   userService;
+  authUser;
   friendList;
   userMsg: string;
+  selectedUserObj;
+  selectUserToSendMsg;
+  myFriendChat = [];
 
   constructor(private af:AngularFire, _router: Router, _userservice : UserService) {
     this.router = _router;
     this.userService = _userservice;
+    this.authUser = _userservice.getUserData();
     this.afRef = af;
+    this.msgsRef = af.database.list("/messages");
+    this.msgsRef.subscribe(messages=>{
+      this.allMsgs = messages;
+      if(this.selectedUserObj && this.selectedUserObj.$key)
+        this.selectedUser(this.selectedUserObj);
+    });
     this.usersRef = af.database.list("/users");
     this.usersRef.subscribe(users=>{
       this.friendList = users;
     })
   }
 
-  signupUser() {
-    if (this.userObj.email.trim() != "" && this.userObj.fullName.trim() != "" && this.userObj.password.trim() != "") {
-      this.userObj.role = "user";
-      console.log(this.userObj);
-      this.afRef.auth.createUser({email: this.userObj.email, password: this.userObj.password}).then(data=> {
-        console.log(data.uid);
-        this.afRef.database.object("/users/" + data.uid).set(this.userObj);
-        alert("Successfully user created ");
+  selectedUser(userObj){
+    this.selectUserToSendMsg = true;
+    console.log(userObj);
+    this.friendList.forEach(friend=>{
+      friend.selectable = false;
+    });
+    userObj.selectable = true;
+    this.selectedUserObj = userObj;
 
-        //clear data fields
-        this.userObj = {
-          email: "",
-          fullName: "",
-          password: "",
-          role: ""
-        };
-        this.router.navigate(["/login"]);
-      }, function (err) {
-        console.log(err);
-        alert(err.message);
-      });
+    this.myFriendChat = [];
+    this.allMsgs.forEach(msgObj=>{
+      if(msgObj.sentTo == userObj.$key && msgObj.sentBy == this.authUser.$key){
+        this.myFriendChat.push(msgObj);
+      }
+    })
 
-    }
-    else {
-      alert("Please fill all fields");
-    }
   }
 
   sendMsg(){
     console.log(this.userMsg);
+    if(this.userMsg.trim() !=""){
+      this.msgsRef.push(
+        {
+          sentBy : this.authUser.$key,
+          sentTo : this.selectedUserObj.$key,
+          message: this.userMsg,
+          fileUrl: ""
+        }
+      ).then(data=>{
+        this.userMsg ="";
+      }, err=>{
+        alert(err.message);
+      })
+    }
   }
 
   logout() {

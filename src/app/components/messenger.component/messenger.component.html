@@ -8,7 +8,7 @@
 <div style="background-color: mintcream; width: 350px;height: 93vh;display: inline-block;">
   <md-list style="width: 100%;">
     <div *ngFor="let userInfo of friendList">
-      <md-list-item class="friends-box">
+      <md-list-item class="friends-box" (click)="selectedUser(userInfo)" [ngClass]="{changeBg: userInfo.selectable}">
         <img md-list-avatar src="/assets/profile.png" alt="profile picture" height="60">
         <h1 md-line><b>{{userInfo.fullName}} </b></h1>
       </md-list-item>
@@ -18,8 +18,21 @@
 </div>
 
 <div style="width: calc(100vw - 367px);;height: 93vh;float: right;">
-  <div class="send-msg-container">
+  <div  *ngIf="!selectUserToSendMsg"> <h2>Select User to send message</h2></div>
+  <div style="height: 700px;overflow-y: scroll;overflow-x: hidden;">
+    <md-list style="width: 100%;">
+      <div *ngFor="let msgObj of myFriendChat">
+
+          <p md-line *ngIf="msgObj.message !=''"><b>{{msgObj.message}} </b></p>
+          <p md-line *ngIf="msgObj.fileUrl !=''"><b>{{msgObj.message}} </b></p>
+
+        <md-divider></md-divider>
+      </div>
+    </md-list>
+  </div>
+  <div class="send-msg-container" *ngIf="selectUserToSendMsg">
     <textarea [(ngModel)]="userMsg" class="feedback-textarea"></textarea>
     <button md-button md-raised-button color="primary" (click)="sendMsg()">Send</button>
   </div>
+
 </div>
