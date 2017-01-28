@@ -12,11 +12,13 @@ import { SignupComponent } from '../components/signup.component/signup.component
 import { LoginComponent } from '../components/login.component/login.component';
 import {UserService} from "../services/user.service";
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+import {MessengerComponent} from "../components/messenger.component/messenger.component";
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    MessengerComponent
   ],
   imports: [
     BrowserModule,
