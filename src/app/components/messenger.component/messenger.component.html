@@ -23,15 +23,15 @@
     <md-list style="width: 100%;">
       <div *ngFor="let msgObj of myFriendChat">
 
-        <p md-line *ngIf="msgObj.message !=''"><b>{{msgObj.message}} </b></p>
-        <p md-line *ngIf="msgObj.fileUrl !=''">
-          <a href="{{msgObj.fileUrl}}" target="_blank">
-            <!--<img src="/assets/file.png" height="100" width="70">-->
-            <img src="{{msgObj.fileUrl}}" height="100" width="120">
-          </a>
-        </p>
-
-        <md-divider></md-divider>
+        <div [ngClass]="{align_right: authUser.$key == msgObj.sentBy}">
+          <p md-line *ngIf="msgObj.message !=''"><b>{{msgObj.message}} </b></p>
+          <p md-line *ngIf="msgObj.fileUrl !=''">
+            <a href="{{msgObj.fileUrl}}" target="_blank">
+              <!--<img src="/assets/file.png" height="100" width="70">-->
+              <img src="{{msgObj.fileUrl}}" height="100" width="120">
+            </a>
+          </p>
+        </div>
       </div>
     </md-list>
   </div>
