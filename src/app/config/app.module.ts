@@ -11,14 +11,12 @@ import { AppComponent } from '../components/root.component/app.component';
 import { SignupComponent } from '../components/signup.component/signup.component';
 import { LoginComponent } from '../components/login.component/login.component';
 import {UserService} from "../services/user.service";
-import {AdminPanelComponent} from "../components/admin.panel.component/admin.panel.component";
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    SignupComponent,
-    AdminPanelComponent
+    SignupComponent
   ],
   imports: [
     BrowserModule,
