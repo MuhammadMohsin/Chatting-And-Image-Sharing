@@ -61,7 +61,7 @@ export class MessengerComponent {
 
     this.myFriendChat = [];
     this.allMsgs.forEach(msgObj=>{
-      if(msgObj.sentTo == userObj.$key && msgObj.sentBy == this.authUser.$key){
+      if((msgObj.sentTo == userObj.$key && msgObj.sentBy == this.authUser.$key) || (msgObj.sentTo == this.authUser.$key && msgObj.sentBy == userObj.$key)){
         this.myFriendChat.push(msgObj);
       }
     })
